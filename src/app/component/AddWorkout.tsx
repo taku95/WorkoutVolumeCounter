@@ -4,25 +4,26 @@ import RemoveIcon from "@mui/icons-material/Remove";
 import React, { useState } from "react";
 
 const AddWorkout: React.FC = () => {
-  const [weight, setWeight] = useState<number>(0);
+  const [weight, setWeight] = useState<number>(60);
   const [reps, setReps] = useState<number>(0);
   const [totalWeight, setTotalWeight] = useState<number>(0);
-
-  const handleWeightChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const newWeight: number = parseFloat(event.target.value);
-    setWeight(newWeight);
-    calculateTotalWeight(newWeight, reps);
-  };
-
-  const handleRepsChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const newReps: number = parseInt(event.target.value);
-    setReps(newReps);
-    calculateTotalWeight(weight, newReps);
-  };
 
   const calculateTotalWeight = (newWeight: number, newReps: number) => {
     const newTotalWeight: number = newWeight * newReps;
     setTotalWeight(newTotalWeight ? newTotalWeight : 0);
+  };
+
+  const calculateRM = (weight: number, reps: number): number => {
+    // RM（リペティション・マックス）の計算式
+    const rm = weight * (1 + reps / 40);
+    // 計算結果を小数点第2位まで丸める
+    if (reps === 0) {
+      return 0;
+    } else if (reps === 1) {
+      return weight;
+    } else {
+      return Math.round(rm * 100) / 100;
+    }
   };
 
   const incrementWeight = () => {
@@ -66,6 +67,41 @@ const AddWorkout: React.FC = () => {
               height: "40px",
             }}
           >
+            RM Converted: {calculateRM(weight, reps)} kg
+          </Typography>
+        </Grid>
+        <Grid item xs={6}>
+          <Typography
+            variant="body1"
+            sx={{
+              color: "#FFFFFF",
+              border: "1px solid",
+              borderRadius: "4px",
+              padding: "8px",
+              borderColor: "#1976d2",
+              width: "100%",
+              marginRight: 1,
+              height: "40px",
+            }}
+          >
+            Total: {totalWeight} kg
+          </Typography>
+        </Grid>
+
+        <Grid item xs={6}>
+          <Typography
+            variant="body1"
+            sx={{
+              color: "#FFFFFF",
+              border: "1px solid",
+              borderRadius: "4px",
+              padding: "8px",
+              borderColor: "#1976d2",
+              width: "100%",
+              marginRight: 1,
+              height: "40px",
+            }}
+          >
             {weight} kg
           </Typography>
         </Grid>
@@ -91,9 +127,7 @@ const AddWorkout: React.FC = () => {
             <RemoveIcon />
           </Button>
         </Grid>
-      </Grid>
 
-      <Grid container spacing={1} mt={1}>
         <Grid item xs={6}>
           <Typography
             variant="body1"
@@ -134,12 +168,6 @@ const AddWorkout: React.FC = () => {
           </Button>
         </Grid>
       </Grid>
-
-      <Box display="flex" justifyContent="flex-end">
-        <Typography variant="body1" sx={{ color: "#FFFFFF" }}>
-          Total: {totalWeight} kg
-        </Typography>
-      </Box>
     </Container>
   );
 };
